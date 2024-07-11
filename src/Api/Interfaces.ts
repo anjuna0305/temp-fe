@@ -38,3 +38,12 @@ export interface SourceSentence {
     "project_id": number,
     "source_sentence": string
 }
+
+export interface ResponseSentence {
+    "project_id": number,
+    "source_sentence_id": number,
+    "user_id": number,
+    "sentence_id": number,
+    "response_sentence": string,
+    "created_at": string
+}

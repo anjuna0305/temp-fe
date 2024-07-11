@@ -4,11 +4,16 @@ import './assets/custom_bootstrap/custom_bootstrap.css'
 import './index.css'
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import TestComponent from './components/TestComponent';
+import LoginPage from './pages/LoginPage';
 
 const router = createBrowserRouter([
     {
         path: "/test",
         element: <TestComponent/>
+    },
+    {
+        path: "/login",
+        element: <LoginPage/>
     }
 ])
 

@@ -27,7 +27,6 @@ export const saveToken = (splitToken: SpliToken): boolean => {
 export const getStoredToken = (): string | null => {
     const token_payload = localStorage.getItem("token_payload") ? localStorage.getItem("token_payload") : ""
     const token_signature = Cookies.get("token_signature") ? Cookies.get("token_signature") : ""
-    console.log("token payload is: ", token_payload)
     if (token_payload === "" || token_signature === "")
         return null
 

@@ -1,8 +1,8 @@
 import MessageAppBackground from "./MessageAppBackground"
 import MinimumNavbar from "./MinimumNavbar.tsx"
-import {useEffect, useState} from "react"
-import {getNextSourceSentences, getSourceSentences} from "../Api/ApiUser.ts";
-import {SourceSentence} from "../Api/Interfaces.ts";
+import { useEffect, useState } from "react"
+import { getOngoingSentence, getResponses, getSourceSentences, sendResponse } from "../Api/ApiUser.ts";
+import { ResponseSentence, SourceSentence } from "../Api/Interfaces.ts";
 
 interface MessageInterface {
     type: string        /*to indicate message or a reply "source", "response", "error" */
@@ -11,71 +11,25 @@ interface MessageInterface {
 }
 
 
-interface ResponseMessage {
-    sentenceId: number
-    sourceId: number
-    sentence: string
+const responseSentenceToMessageInterface = (responseMsg: ResponseSentence): MessageInterface => {
+    return { type: "response", content: responseMsg.response_sentence, status: "sent" } as MessageInterface
 }
 
-interface SourceMessage {
-    sentenceId: number
-    sentence: string
-}
-
-const responseMessageToMessageInterface = (responseMsg: ResponseMessage): MessageInterface => {
-    return {type: "response", content: responseMsg.sentence, status: "sent"} as MessageInterface
-}
-
-const sourceMessageToMessageInterface = (sourceMsg: SourceMessage): MessageInterface => {
-    return {type: "source", content: sourceMsg.sentence, status: "sent"} as MessageInterface
+const sourceSentenceToMessageInterface = (sourceMsg: SourceSentence): MessageInterface => {
+    return { type: "source", content: sourceMsg.source_sentence, status: "sent" } as MessageInterface
 }
 
 
-const fakeResponse = [
-    {"sentenceId": 1001, "sourceId": 1, "sentence": "The quick brown fox ."},
-    {"sentenceId": 1002, "sourceId": 2, "sentence": "A journey of a thousand."},
-    {"sentenceId": 1003, "sourceId": 3, "sentence": "To be or not to be, that is the question."},
-    {"sentenceId": 1004, "sourceId": 4, "sentence": "All that glitters is not gold."},
-    {"sentenceId": 1005, "sourceId": 5, "sentence": "The pen is mightier than the sword."},
-    {"sentenceId": 1006, "sourceId": 6, "sentence": "A picture is worth a thousand words."},
-    {"sentenceId": 1007, "sourceId": 7, "sentence": "When in Rome, do as the Romans do."},
-    {"sentenceId": 1008, "sourceId": 8, "sentence": "The early bird catches the worm."},
-    {"sentenceId": 1009, "sourceId": 9, "sentence": "Actions speak louder than words."},
-    {"sentenceId": 1010, "sourceId": 10, "sentence": "Beauty is in the eye of the beholder."},
-    {"sentenceId": 1011, "sourceId": 11, "sentence": "Necessity is the mother of invention."},
-    {"sentenceId": 1012, "sourceId": 12, "sentence": "A watched pot never boils."},
-    {"sentenceId": 1013, "sourceId": 13, "sentence": "Don't count your chickens before they hatch."},
-    {"sentenceId": 1014, "sourceId": 14, "sentence": "Too many cooks spoil the broth."},
-    {"sentenceId": 1015, "sourceId": 15, "sentence": "You can't judge a book by its cover."},
-    {"sentenceId": 1016, "sourceId": 16, "sentence": "The grass is always greener on the other side."},
-    {"sentenceId": 1017, "sourceId": 17, "sentence": "A stitch in time saves nine."},
-    {"sentenceId": 1018, "sourceId": 18, "sentence": "Birds of a feather flock together."},
-    {"sentenceId": 1019, "sourceId": 19, "sentence": "Every cloud has a silver lining."},
-    {"sentenceId": 1020, "sourceId": 20, "sentence": "A penny saved is a penny earned."}
-]
+// const useMessages = () => {
+//     const [responses, setResponses] = useState([]);
 
-const fakeSource = [
-    {"sentenceId": 1, "sentence": "The quick brown fox jumps over the lazy dog."},
-    {"sentenceId": 2, "sentence": "A journey of a thousand miles begins with a single step."},
-    {"sentenceId": 3, "sentence": "To be or not to be, that is the question."},
-    {"sentenceId": 4, "sentence": "All that glitters is not gold."},
-    {"sentenceId": 5, "sentence": "The pen is mightier than the sword."},
-    {"sentenceId": 6, "sentence": "A picture is worth a thousand words."},
-    {"sentenceId": 7, "sentence": "When in Rome, do as the Romans do."},
-    {"sentenceId": 8, "sentence": "The early bird catches the worm."},
-    {"sentenceId": 9, "sentence": "Actions speak louder than words."},
-    {"sentenceId": 10, "sentence": "Beauty is in the eye of the beholder."},
-    {"sentenceId": 11, "sentence": "Necessity is the mother of invention."},
-    {"sentenceId": 12, "sentence": "A watched pot never boils."},
-    {"sentenceId": 13, "sentence": "Don't count your chickens before they hatch."},
-    {"sentenceId": 14, "sentence": "Too many cooks spoil the broth."},
-    {"sentenceId": 15, "sentence": "You can't judge a book by its cover."},
-    {"sentenceId": 16, "sentence": "The grass is always greener on the other side."},
-    {"sentenceId": 17, "sentence": "A stitch in time saves nine."},
-    {"sentenceId": 18, "sentence": "Birds of a feather flock together."},
-    {"sentenceId": 19, "sentence": "Every cloud has a silver lining."},
-    {"sentenceId": 20, "sentence": "A penny saved is a penny earned."}
-]
+//     useEffect(() => {
+//          setResponses(data))
+
+// }, []); // This effect runs only once on component mount
+
+//     return { responses, setResponses };
+//   };
 
 
 const TestComponent = () => {
@@ -83,65 +37,84 @@ const TestComponent = () => {
     const msgLimit = 3
 
     const [isMessageAllowed, setMessageAllowed] = useState<boolean>(false)
-    const [projectId, setPorjectId] = useState<number>(0)
+    const [projectId, setPorjectId] = useState<number>(1)
+    const [sourceId, setSourceId] = useState<number>(0)
     const [messages, setMessages] = useState<MessageInterface[]>([])
+
+
+    const messageInput = document.getElementById("message_text_input") as HTMLInputElement
+
+    // const changeProject = async (pId: number) => {
+    //     const loadInitialMessages = async () => {
+    //         const initialResponseLoad = await fetchResponses()
+    //         const messageInterfaces = await generateRequestResponseList(initialResponseLoad)
+
+    //         setMessages([sourceSentenceToMessageInterface(newSourceSentence), ...messageInterfaces])
+    //     }
+    //     loadInitialMessages()
+    //     setMessageAllowed(true)
+
+
+
+    //     setPorjectId(pId)
+    // }
 
     //replace with real endpoint
     const fetchSourceSentence = async (id: number) => {
-        try {
-            const sourceSentence = await getSourceSentences(id)
-            if (sourceSentence)
-                return sourceSentence
-            else
-                return {} as SourceSentence
-        } catch (error) {
-            console.error(error)
+        console.log("saurce sentence fetch called for ", id)
+        const sourceSentence = await getSourceSentences(id)
+        if (sourceSentence) {
+            console.log(`source centence for ${id}: `, sourceSentence.source_sentence)
+            return sourceSentence
         }
+        else
+            return {} as SourceSentence
     }
 
-    const fetchSourceSentence = async () => {
-        const sentence = await getNextSourceSentences(project_id)
+    const fetchOngoingSentence = async () => {
+        const sourceSentence = await getOngoingSentence(projectId)
+        if (sourceSentence) {
+            const sourceMessageInterface = sourceSentenceToMessageInterface(sourceSentence)
+            const messageList = [...messages, sourceMessageInterface]
+            console.log("basvdvhbsdkvbbbbbaasdj", messageList)
+            setMessages(messageList)
+            console.log('here', messages)
+        }
     }
 
     //replace with real endpoint
-    const fetchResponses = async () => {
-        const results = []
-        for (let i = msgSkip; i < msgLimit; i++) {
-            results.push(fakeResponse[i])
+    const fetchResponses = async (): Promise<ResponseSentence[] | undefined> => {
+        const responses = await getResponses(projectId, msgSkip, msgLimit)
+        if (responses) {
+            msgSkip += msgLimit
         }
-        msgSkip += 3
-        return results
+        console.log("response fetched", responses)
+        return responses
     }
 
-    const sendResponse = () => {
-        setMessages((prev) => {
-            return [{type: "response", content: "this is new message", status: "sending"}, ...prev]
-        })
+    const send = async () => {
+        const isSent = await sendResponse(sourceId, projectId, messageInput.value)
+        if (isSent) {
+            console.log("Message sent")
+        }
     }
 
     const loadMore = async () => {
         const newResponseSet = await fetchResponses()
-        const newMessageInterfaceSet = await generateRequestResponseList(newResponseSet)
-
-        setMessages((prev) => prev.concat(newMessageInterfaceSet))
+        if (newResponseSet) {
+            const newMessageInterfaceSet = await generateRequestResponseList(newResponseSet)
+            setMessages((prev) => prev.concat(newMessageInterfaceSet))
+        }
     }
 
-    /*activity handlers
-        *these functions are used to handle user interaction with the page
-    */
-    // const sendReplyHandler = async () => {
-    //
-    // }
 
-
-    const generateRequestResponseList = async (responseList: ResponseMessage[]) => {
-        console.log("start executing! 1")
+    const generateRequestResponseList = async (responseList: ResponseSentence[]) => {
         const sourceIds: number[] = []
         for (let i = 0; i < responseList.length; i++) {
-            sourceIds.push(responseList[i].sourceId)
+            sourceIds.push(responseList[i].source_sentence_id)
         }
-        console.log("start executing! 2")
-        const sourceList: SourceMessage[] = []
+
+        const sourceList: SourceSentence[] = []
         for (let i = 0; i < responseList.length; i++) {
             const sourceSentence = await fetchSourceSentence(sourceIds[i])
             sourceList.push(sourceSentence)
@@ -149,28 +122,31 @@ const TestComponent = () => {
         console.log("start executing! 3")
         const messageInterfaceList = []
         for (let i = 0; i < responseList.length; i++) {
-            messageInterfaceList.push(responseMessageToMessageInterface(responseList[i]))
-            messageInterfaceList.push(sourceMessageToMessageInterface(sourceList[i]))
+            messageInterfaceList.push(responseSentenceToMessageInterface(responseList[i]))
+            messageInterfaceList.push(sourceSentenceToMessageInterface(sourceList[i]))
         }
         return messageInterfaceList
     }
 
     useEffect(() => {
+        setPorjectId(1);
         const loadInitialMessages = async () => {
             const initialResponseLoad = await fetchResponses()
-            const messageInterfaces = await generateRequestResponseList(initialResponseLoad)
-            const newSourceSentence = await fetchSourceSentence(10)
-
-            setMessages([sourceMessageToMessageInterface(newSourceSentence), ...messageInterfaces])
+            if (initialResponseLoad) {
+                const messageInterfaces = await generateRequestResponseList(initialResponseLoad)
+                setMessages([...messageInterfaces])
+            }
         }
         loadInitialMessages()
+        fetchOngoingSentence()
         setMessageAllowed(true)
     }, [])
 
+    console.log(messages)
 
     return (
         <>
-            <MinimumNavbar/>
+            <MinimumNavbar />
             <div className="container">
                 <div className="d-flex justify-content-center vh-100">
                     <div className="row w-100">
@@ -192,8 +168,8 @@ const TestComponent = () => {
                                 <button onClick={loadMore}>load more</button>
                             </div>
                             <div id="message_form">
-                                <input type="text" name="message" id="message_text_input"/>
-                                <button disabled={!isMessageAllowed} onClick={sendResponse} id="send_button">Send
+                                <input type="text" name="message" id="message_text_input" />
+                                <button disabled={!isMessageAllowed} onClick={send} id="send_button">Send
                                 </button>
                             </div>
                         </MessageAppBackground>
