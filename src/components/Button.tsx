@@ -9,7 +9,7 @@ interface Props {
 
 const Button = (props: Props) => {
     return (
-        <button className={props.className} disabled={props.disabled ? true : false}>{props.children}</button>
+        <button className={props.className} disabled={!!props.disabled}>{props.children}</button>
     )
 }
 

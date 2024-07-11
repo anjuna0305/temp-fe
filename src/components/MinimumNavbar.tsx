@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "../Auth/Auth"
 import { Link } from "react-router-dom"
 
-const MinimulNavbar = () => {
+const MinimumNavbar = () => {
     const [isLogged, setIsLogged] = useState<boolean | undefined>(undefined)
 
     useEffect(() => {
@@ -39,4 +39,4 @@ const MinimulNavbar = () => {
     )
 }
 
-export default MinimulNavbar
+export default MinimumNavbar

@@ -1,6 +1,8 @@
 import MessageAppBackground from "./MessageAppBackground"
-import MinimulNavbar from "./MinimulNavbar"
-import { useEffect, useState } from "react"
+import MinimumNavbar from "./MinimumNavbar.tsx"
+import {useEffect, useState} from "react"
+import {getNextSourceSentences, getSourceSentences} from "../Api/ApiUser.ts";
+import {SourceSentence} from "../Api/Interfaces.ts";
 
 interface MessageInterface {
     type: string        /*to indicate message or a reply "source", "response", "error" */
@@ -21,80 +23,89 @@ interface SourceMessage {
 }
 
 const responseMessageToMessageInterface = (responseMsg: ResponseMessage): MessageInterface => {
-    return { type: "response", content: responseMsg.sentence, status: "sent" } as MessageInterface
+    return {type: "response", content: responseMsg.sentence, status: "sent"} as MessageInterface
 }
 
 const sourceMessageToMessageInterface = (sourceMsg: SourceMessage): MessageInterface => {
-    return { type: "source", content: sourceMsg.sentence, status: "sent" } as MessageInterface
+    return {type: "source", content: sourceMsg.sentence, status: "sent"} as MessageInterface
 }
 
 
-
-
 const fakeResponse = [
-    { "sentenceId": 1001, "sourceId": 1, "sentence": "The quick brown fox ." },
-    { "sentenceId": 1002, "sourceId": 2, "sentence": "A journey of a thousand." },
-    { "sentenceId": 1003, "sourceId": 3, "sentence": "To be or not to be, that is the question." },
-    { "sentenceId": 1004, "sourceId": 4, "sentence": "All that glitters is not gold." },
-    { "sentenceId": 1005, "sourceId": 5, "sentence": "The pen is mightier than the sword." },
-    { "sentenceId": 1006, "sourceId": 6, "sentence": "A picture is worth a thousand words." },
-    { "sentenceId": 1007, "sourceId": 7, "sentence": "When in Rome, do as the Romans do." },
-    { "sentenceId": 1008, "sourceId": 8, "sentence": "The early bird catches the worm." },
-    { "sentenceId": 1009, "sourceId": 9, "sentence": "Actions speak louder than words." },
-    { "sentenceId": 1010, "sourceId": 10, "sentence": "Beauty is in the eye of the beholder." },
-    { "sentenceId": 1011, "sourceId": 11, "sentence": "Necessity is the mother of invention." },
-    { "sentenceId": 1012, "sourceId": 12, "sentence": "A watched pot never boils." },
-    { "sentenceId": 1013, "sourceId": 13, "sentence": "Don't count your chickens before they hatch." },
-    { "sentenceId": 1014, "sourceId": 14, "sentence": "Too many cooks spoil the broth." },
-    { "sentenceId": 1015, "sourceId": 15, "sentence": "You can't judge a book by its cover." },
-    { "sentenceId": 1016, "sourceId": 16, "sentence": "The grass is always greener on the other side." },
-    { "sentenceId": 1017, "sourceId": 17, "sentence": "A stitch in time saves nine." },
-    { "sentenceId": 1018, "sourceId": 18, "sentence": "Birds of a feather flock together." },
-    { "sentenceId": 1019, "sourceId": 19, "sentence": "Every cloud has a silver lining." },
-    { "sentenceId": 1020, "sourceId": 20, "sentence": "A penny saved is a penny earned." }
+    {"sentenceId": 1001, "sourceId": 1, "sentence": "The quick brown fox ."},
+    {"sentenceId": 1002, "sourceId": 2, "sentence": "A journey of a thousand."},
+    {"sentenceId": 1003, "sourceId": 3, "sentence": "To be or not to be, that is the question."},
+    {"sentenceId": 1004, "sourceId": 4, "sentence": "All that glitters is not gold."},
+    {"sentenceId": 1005, "sourceId": 5, "sentence": "The pen is mightier than the sword."},
+    {"sentenceId": 1006, "sourceId": 6, "sentence": "A picture is worth a thousand words."},
+    {"sentenceId": 1007, "sourceId": 7, "sentence": "When in Rome, do as the Romans do."},
+    {"sentenceId": 1008, "sourceId": 8, "sentence": "The early bird catches the worm."},
+    {"sentenceId": 1009, "sourceId": 9, "sentence": "Actions speak louder than words."},
+    {"sentenceId": 1010, "sourceId": 10, "sentence": "Beauty is in the eye of the beholder."},
+    {"sentenceId": 1011, "sourceId": 11, "sentence": "Necessity is the mother of invention."},
+    {"sentenceId": 1012, "sourceId": 12, "sentence": "A watched pot never boils."},
+    {"sentenceId": 1013, "sourceId": 13, "sentence": "Don't count your chickens before they hatch."},
+    {"sentenceId": 1014, "sourceId": 14, "sentence": "Too many cooks spoil the broth."},
+    {"sentenceId": 1015, "sourceId": 15, "sentence": "You can't judge a book by its cover."},
+    {"sentenceId": 1016, "sourceId": 16, "sentence": "The grass is always greener on the other side."},
+    {"sentenceId": 1017, "sourceId": 17, "sentence": "A stitch in time saves nine."},
+    {"sentenceId": 1018, "sourceId": 18, "sentence": "Birds of a feather flock together."},
+    {"sentenceId": 1019, "sourceId": 19, "sentence": "Every cloud has a silver lining."},
+    {"sentenceId": 1020, "sourceId": 20, "sentence": "A penny saved is a penny earned."}
 ]
 
 const fakeSource = [
-    { "sentenceId": 1, "sentence": "The quick brown fox jumps over the lazy dog." },
-    { "sentenceId": 2, "sentence": "A journey of a thousand miles begins with a single step." },
-    { "sentenceId": 3, "sentence": "To be or not to be, that is the question." },
-    { "sentenceId": 4, "sentence": "All that glitters is not gold." },
-    { "sentenceId": 5, "sentence": "The pen is mightier than the sword." },
-    { "sentenceId": 6, "sentence": "A picture is worth a thousand words." },
-    { "sentenceId": 7, "sentence": "When in Rome, do as the Romans do." },
-    { "sentenceId": 8, "sentence": "The early bird catches the worm." },
-    { "sentenceId": 9, "sentence": "Actions speak louder than words." },
-    { "sentenceId": 10, "sentence": "Beauty is in the eye of the beholder." },
-    { "sentenceId": 11, "sentence": "Necessity is the mother of invention." },
-    { "sentenceId": 12, "sentence": "A watched pot never boils." },
-    { "sentenceId": 13, "sentence": "Don't count your chickens before they hatch." },
-    { "sentenceId": 14, "sentence": "Too many cooks spoil the broth." },
-    { "sentenceId": 15, "sentence": "You can't judge a book by its cover." },
-    { "sentenceId": 16, "sentence": "The grass is always greener on the other side." },
-    { "sentenceId": 17, "sentence": "A stitch in time saves nine." },
-    { "sentenceId": 18, "sentence": "Birds of a feather flock together." },
-    { "sentenceId": 19, "sentence": "Every cloud has a silver lining." },
-    { "sentenceId": 20, "sentence": "A penny saved is a penny earned." }
+    {"sentenceId": 1, "sentence": "The quick brown fox jumps over the lazy dog."},
+    {"sentenceId": 2, "sentence": "A journey of a thousand miles begins with a single step."},
+    {"sentenceId": 3, "sentence": "To be or not to be, that is the question."},
+    {"sentenceId": 4, "sentence": "All that glitters is not gold."},
+    {"sentenceId": 5, "sentence": "The pen is mightier than the sword."},
+    {"sentenceId": 6, "sentence": "A picture is worth a thousand words."},
+    {"sentenceId": 7, "sentence": "When in Rome, do as the Romans do."},
+    {"sentenceId": 8, "sentence": "The early bird catches the worm."},
+    {"sentenceId": 9, "sentence": "Actions speak louder than words."},
+    {"sentenceId": 10, "sentence": "Beauty is in the eye of the beholder."},
+    {"sentenceId": 11, "sentence": "Necessity is the mother of invention."},
+    {"sentenceId": 12, "sentence": "A watched pot never boils."},
+    {"sentenceId": 13, "sentence": "Don't count your chickens before they hatch."},
+    {"sentenceId": 14, "sentence": "Too many cooks spoil the broth."},
+    {"sentenceId": 15, "sentence": "You can't judge a book by its cover."},
+    {"sentenceId": 16, "sentence": "The grass is always greener on the other side."},
+    {"sentenceId": 17, "sentence": "A stitch in time saves nine."},
+    {"sentenceId": 18, "sentence": "Birds of a feather flock together."},
+    {"sentenceId": 19, "sentence": "Every cloud has a silver lining."},
+    {"sentenceId": 20, "sentence": "A penny saved is a penny earned."}
 ]
-
-
 
 
 const TestComponent = () => {
     let msgSkip = 0
-    let msgLimit = 3
+    const msgLimit = 3
 
-    const [isMessageAllowes, setMessageAllowed] = useState<boolean>(false)
+    const [isMessageAllowed, setMessageAllowed] = useState<boolean>(false)
+    const [projectId, setPorjectId] = useState<number>(0)
     const [messages, setMessages] = useState<MessageInterface[]>([])
 
     //replace with real endpoint
     const fetchSourceSentence = async (id: number) => {
-        return fakeSource[id - 1]
+        try {
+            const sourceSentence = await getSourceSentences(id)
+            if (sourceSentence)
+                return sourceSentence
+            else
+                return {} as SourceSentence
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const fetchSourceSentence = async () => {
+        const sentence = await getNextSourceSentences(project_id)
     }
 
     //replace with real endpoint
     const fetchResponses = async () => {
-        let results = []
+        const results = []
         for (let i = msgSkip; i < msgLimit; i++) {
             results.push(fakeResponse[i])
         }
@@ -104,8 +115,7 @@ const TestComponent = () => {
 
     const sendResponse = () => {
         setMessages((prev) => {
-            const newMessages = [{ type: "response", content: "this is new message", status: "sending" }, ...prev]
-            return newMessages
+            return [{type: "response", content: "this is new message", status: "sending"}, ...prev]
         })
     }
 
@@ -117,29 +127,29 @@ const TestComponent = () => {
     }
 
     /*activity handlers
-        *these functions are used to handle user interraction with the page
+        *these functions are used to handle user interaction with the page
     */
-    const sendReplyHandler = async () => {
+    // const sendReplyHandler = async () => {
+    //
+    // }
 
-    }
 
-
-    const generateRequestResponseList = async (reaponseList: ResponseMessage[]) => {
+    const generateRequestResponseList = async (responseList: ResponseMessage[]) => {
         console.log("start executing! 1")
-        let sourceIds: number[] = []
-        for (let i = 0; i < reaponseList.length; i++) {
-            sourceIds.push(reaponseList[i].sourceId)
+        const sourceIds: number[] = []
+        for (let i = 0; i < responseList.length; i++) {
+            sourceIds.push(responseList[i].sourceId)
         }
         console.log("start executing! 2")
-        let sourceList: SourceMessage[] = []
-        for (let i = 0; i < reaponseList.length; i++) {
+        const sourceList: SourceMessage[] = []
+        for (let i = 0; i < responseList.length; i++) {
             const sourceSentence = await fetchSourceSentence(sourceIds[i])
             sourceList.push(sourceSentence)
         }
         console.log("start executing! 3")
-        let messageInterfaceList = []
-        for (let i = 0; i < reaponseList.length; i++) {
-            messageInterfaceList.push(responseMessageToMessageInterface(reaponseList[i]))
+        const messageInterfaceList = []
+        for (let i = 0; i < responseList.length; i++) {
+            messageInterfaceList.push(responseMessageToMessageInterface(responseList[i]))
             messageInterfaceList.push(sourceMessageToMessageInterface(sourceList[i]))
         }
         return messageInterfaceList
@@ -160,24 +170,31 @@ const TestComponent = () => {
 
     return (
         <>
-            <MinimulNavbar />
+            <MinimumNavbar/>
             <div className="container">
                 <div className="d-flex justify-content-center vh-100">
                     <div className="row w-100">
-                        <MessageAppBackground className="col-4 mt-5 left-container">This is lef</MessageAppBackground>
+                        <MessageAppBackground className="col-4 mt-5 left-container">
+                            <div className={"project-chat"}>Test component</div>
+                            <div className={"project-chat"}>Test component</div>
+                            <div className={"project-chat"}>Test component</div>
+                            <div className={"project-chat"}>Test component</div>
+                        </MessageAppBackground>
 
-                        <MessageAppBackground className="col-8 mt-5 right-contaienr" >
+                        <MessageAppBackground className="col-8 mt-5 right-container">
                             <div className="message-section" id="msg_application">
                                 {messages.map((message, index) => (
-                                    <div className={message.type == "response" ? "reply" : "message"} key={index}>
-                                        <div className="message-card"> {message.content}</div>
+                                    <div className={``} key={index}>
+                                        <div
+                                            className={`message-card ${message.type == "response" ? "reply" : "message"}`}> {message.content}</div>
                                     </div>
                                 ))}
-                                <button onClick={loadMore}>loadmore</button>
+                                <button onClick={loadMore}>load more</button>
                             </div>
-                            <div className="form-section">
-                                <input type="text" name="message" id="" />
-                                <button disabled={!isMessageAllowes} onClick={sendResponse}>Send</button>
+                            <div id="message_form">
+                                <input type="text" name="message" id="message_text_input"/>
+                                <button disabled={!isMessageAllowed} onClick={sendResponse} id="send_button">Send
+                                </button>
                             </div>
                         </MessageAppBackground>
                     </div>

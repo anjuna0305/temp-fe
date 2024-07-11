@@ -37,6 +37,7 @@ const HamburgerMenu = () => {
                 return
             }
             setIsHamburgerMenuOpen((event.target instanceof Node && hamburgerElement?.contains(event.target)) ? true : false)
+            // setIsHamburgerMenuOpen((event.target instanceof Node && hamburgerElement?.contains(event.target)) ? true : false)
         })
 
         const loggedUserInfo = getSavedUserInfoFromLocalstorage()

@@ -28,43 +28,13 @@ export interface UserInfo {
     disabled: boolean
 }
 
-export interface ApiServiceData {
-    name: string,
-    description: string,
-    id: number
-    port: number
-    documentation: string
-    is_active: boolean
-}
-
-export interface UserApiServiceData {
-    api_service_id: number
-    api_service_name: string
-    status: string
-    access: boolean
-    request_per_action: number
-    exp_date: string
-}
-
 export interface Alert {
     type: string
     message: string
 }
 
-export interface AccessRequestData {
-    user_id: number
-    api_service_id: number
-    status: string
-    request_per_action: number
-    created_at: string
-    exp_date: string
-    username: string
-    api_service_name: string
-}
-
-export interface CreateApiServicePayload {
-    name: string,
-    port: number,
-    description: string,
-    documentation: null | File
+export interface SourceSentence {
+    "sentence_id": number,
+    "project_id": number,
+    "source_sentence": string
 }

@@ -1,5 +1,5 @@
 import axiosInstance from "./AxiosConfig"
-import { AccessRequestData, ApiServiceData, CreateApiServicePayload, UserApiServiceData, UserInfo } from "./Interfaces"
+import {AccessRequestData, CreateApiServicePayload, UserApiServiceData, UserInfo} from "./Interfaces"
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -32,9 +32,8 @@ export const blockUser = async (userId: number): Promise<boolean> => {
     await delay(3000)
     try {
         const response = await axiosInstance.patch(`admin/users/${userId}/block`)
-        if (response.status !== 200)
-            return false
-        return true
+        return response.status === 200;
+
     } catch (error) {
         return false
     }
@@ -44,9 +43,8 @@ export const unBlockUser = async (userId: number): Promise<boolean> => {
     await delay(3000)
     try {
         const response = await axiosInstance.patch(`admin/users/${userId}/unblock`)
-        if (response.status !== 200)
-            return false
-        return true
+        return response.status === 200;
+
     } catch (error) {
         return false
     }
@@ -112,10 +110,8 @@ export const blockService = async (userId: number, apiId: number): Promise<boole
     await delay(2000)
     try {
         const response = await axiosInstance.patch(`admin/users/${userId}/api/${apiId}/block`)
-        if (response.status !== 200) {
-            return false
-        }
-        return true
+        return response.status === 200;
+
     } catch (error) {
         return false
     }
@@ -126,10 +122,8 @@ export const unblockService = async (userId: number, apiId: number): Promise<boo
     await delay(2000)
     try {
         const response = await axiosInstance.patch(`admin/users/${userId}/api/${apiId}/unblock`)
-        if (response.status !== 200) {
-            return false
-        }
-        return true
+        return response.status === 200;
+
     } catch (error) {
         return false
     }
@@ -144,12 +138,11 @@ export const createService = async (values: CreateApiServicePayload) => {
         formData.append('documentation', values.documentation);
     }
 
-    const response = await axiosInstance.post("admin/services/new", values, {
+    return await axiosInstance.post("admin/services/new", values, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
     })
-    return response
 }
 
 
@@ -162,20 +155,18 @@ export const updateService = async (values: CreateApiServicePayload, apiId: numb
         formData.append('documentation', values.documentation)
     }
 
-    const response = await axiosInstance.put(`/admin/services/${apiId}`, values, {
+    return await axiosInstance.put(`/admin/services/${apiId}`, values, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
     })
-    return response
 }
 
 export const stopService = async (apiId: number) => {
     try {
         const response = await axiosInstance.patch(`admin/api/${apiId}/stop`)
-        if (response.status !== 200)
-            return false
-        return true
+        return response.status === 200;
+
     } catch (error) {
         return true
     }
@@ -184,9 +175,8 @@ export const stopService = async (apiId: number) => {
 export const startService = async (apiId: number) => {
     try {
         const response = await axiosInstance.patch(`admin/api/${apiId}/start`)
-        if (response.status !== 200)
-            return false
-        return true
+        return response.status === 200;
+
     } catch (error) {
         return true
     }

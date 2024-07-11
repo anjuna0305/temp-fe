@@ -1,11 +1,11 @@
 import axiosInstance from "./AxiosConfig"
-import { LoginPayload, signupPayload } from "./Interfaces"
-import { getSavedUserInfoFromLocalstorage, saveToken, saveUserInfoLocalstorage, splitToken } from "../Auth/Auth"
-import { getLoggedUserInfo } from "./ApiAuth"
+import {LoginPayload, signupPayload, SourceSentence} from "./Interfaces"
+import {saveToken, saveUserInfoLocalstorage, splitToken} from "../Auth/Auth"
+import {getLoggedUserInfo} from "./ApiAuth"
 
 
 // user login
-export const userLogin = async ({ email, password }: LoginPayload) => {
+export const userLogin = async ({email, password}: LoginPayload) => {
     // prepare the login form
     const form_data = new FormData()
     form_data.append("username", email)
@@ -42,42 +42,33 @@ export const userLogin = async ({ email, password }: LoginPayload) => {
 
 export const userSignup = async (payload: signupPayload) => {
     try {
-        const response = await axiosInstance.post("auth/create-user", payload)
-        return response
+        return await axiosInstance.post("auth/create-user", payload)
     } catch (error) {
         throw error
     }
 }
 
-export const getApiAccessRequest = async (apiId: number) => {
-    const user = getSavedUserInfoFromLocalstorage()
-    const params = {
-        user_id: user?.id,
-        api_service_id: apiId
-    }
 
+export const getSourceSentences = async (sentence_id: number): Promise<SourceSentence | undefined> => {
     try {
-        const response = axiosInstance.get("users/access-request", { params: params })
-        return response
-    }
-    catch (error) {
+        const response = await axiosInstance.get(`user/source/${sentence_id}`)
+        if (response.data)
+            return response.data as SourceSentence
+        else
+            return undefined
+    } catch (error) {
         throw error
     }
 }
 
-export const sendApiAccessRequest = async (apiId: number) => {
-    const user = getSavedUserInfoFromLocalstorage()
-    const payload = {
-        user_id: user?.id,
-        api_service_id: apiId,
-        status: ""
-    }
-
+export const getNextSourceSentences = async (projectId: number): Promise<SourceSentence | undefined> => {
     try {
-        const response = axiosInstance.post("users/access-request", payload)
-        return response
-    }
-    catch (error) {
+        const response = await axiosInstance.get(`user/source?project_id=${projectId}`)
+        if (response.data)
+            return response.data as SourceSentence
+        else
+            return undefined
+    } catch (error) {
         throw error
     }
-} 
+}
