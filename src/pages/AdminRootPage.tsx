@@ -1,7 +1,8 @@
 // import { useEffect } from 'react'
-import MinimulNavbar from '../components/MinimulNavbar'
+
 import { NavLink, Outlet } from 'react-router-dom'
 import { useEffect, } from 'react'
+import MinimumNavbar from '../components/MinimumNavbar'
 // import { getServiceByServiceId } from '../Api/ApiService'
 // import { ApiServiceData } from '../Api/Interfaces'
 
@@ -31,7 +32,7 @@ const AdminRootPage = () => {
 
     return (
         <>
-            <MinimulNavbar />
+            <MinimumNavbar/>
             <div className='container'>
                 <div className="row">
                     <div className='col-3 d-flex flex-column border p-3 py-3 apiInfoPage-height' id='left-section'>
@@ -39,9 +40,9 @@ const AdminRootPage = () => {
 
                         <ul className='p-4 px-1 pt-3 d-grid gap-2 overflowY-auto'>
                             <div className="list-group">
-                                <NavLink className={"list-group-item list-group-item-action list-group-item-light"} to={"api"}>Api Services</NavLink>
-                                <NavLink className={"list-group-item list-group-item-action list-group-item-light"} to={"requests"}>Api Requests</NavLink>
-                                <NavLink className={"list-group-item list-group-item-action list-group-item-light"} to={"users"}>Users</NavLink>
+                                <NavLink className={"list-group-item list-group-item-action list-group-item-light"} to={"projects"}>Projects</NavLink>
+                                {/* <NavLink className={"list-group-item list-group-item-action list-group-item-light"} to={"requests"}></NavLink> */}
+                                {/* <NavLink className={"list-group-item list-group-item-action list-group-item-light"} to={"users"}>Users</NavLink> */}
                             </div>
                         </ul>
 

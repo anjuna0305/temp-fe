@@ -47,3 +47,9 @@ export interface ResponseSentence {
     "response_sentence": string,
     "created_at": string
 }
+
+export interface ProjectInfo {
+    "project_name": string,
+    "created_at": string,
+    "project_id": number
+}

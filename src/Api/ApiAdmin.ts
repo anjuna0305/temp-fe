@@ -1,5 +1,5 @@
 import axiosInstance from "./AxiosConfig"
-import {AccessRequestData, CreateApiServicePayload, UserApiServiceData, UserInfo} from "./Interfaces"
+import { UserInfo, ProjectInfo } from "./Interfaces"
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -50,21 +50,7 @@ export const unBlockUser = async (userId: number): Promise<boolean> => {
     }
 }
 
-export const getRequests = async (status: string, skip: number, limit: number): Promise<AccessRequestData[]> => {
-    // pending || approved || rejected
-    try {
-        const response = await axiosInstance.get("admin/requests", {
-            params: {
-                status: status,
-                skip: skip,
-                limit: limit
-            }
-        })
-        return response.data as AccessRequestData[]
-    } catch (error) {
-        return [] as AccessRequestData[]
-    }
-}
+
 
 export const approveRequest = async (userId: number, apiServiceId: number) => {
     // await delay(5000)
@@ -95,16 +81,6 @@ export const rejectRequest = async (userId: number, apiServiceId: number) => {
 }
 
 
-export const getServicesByUserId = async (userId: number): Promise<UserApiServiceData[]> => {
-    try {
-        const response = await axiosInstance.get(`admin/users/${userId}/api`)
-        if (response.status !== 200)
-            return [] as UserApiServiceData[]
-        return response.data as UserApiServiceData[]
-    } catch (error) {
-        return [] as UserApiServiceData[]
-    }
-}
 
 export const blockService = async (userId: number, apiId: number): Promise<boolean> => {
     await delay(2000)
@@ -129,38 +105,6 @@ export const unblockService = async (userId: number, apiId: number): Promise<boo
     }
 }
 
-export const createService = async (values: CreateApiServicePayload) => {
-    const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('port', values.port.toString());
-    formData.append('description', values.description);
-    if (values.documentation) {
-        formData.append('documentation', values.documentation);
-    }
-
-    return await axiosInstance.post("admin/services/new", values, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    })
-}
-
-
-export const updateService = async (values: CreateApiServicePayload, apiId: number) => {
-    const formData = new FormData()
-    formData.append('name', values.name)
-    formData.append('port', values.port.toString())
-    formData.append('description', values.description)
-    if (values.documentation) {
-        formData.append('documentation', values.documentation)
-    }
-
-    return await axiosInstance.put(`/admin/services/${apiId}`, values, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    })
-}
 
 export const stopService = async (apiId: number) => {
     try {
@@ -172,12 +116,43 @@ export const stopService = async (apiId: number) => {
     }
 }
 
-export const startService = async (apiId: number) => {
-    try {
-        const response = await axiosInstance.patch(`admin/api/${apiId}/start`)
-        return response.status === 200;
 
+export const downloadResponses = async (projectId: number) => {
+    return await axiosInstance.get(`admin/responses?project_id=${projectId}`, { responseType: 'blob' })
+}
+
+
+export const getProjects = async (): Promise<ProjectInfo[] | undefined> => {
+    try {
+        const projects = await axiosInstance.get("admin/project")
+        return projects.data
     } catch (error) {
-        return true
+        return undefined
+    }
+}
+
+export const getProjectInfo = async (projectId: number): Promise<ProjectInfo | undefined> => {
+    try {
+        const response = await axiosInstance.get(`admin/project/${projectId}`)
+        if (projectId)
+            return response.data
+    } catch (error) {
+        return undefined
+    }
+}
+
+export const uploadSourceSentenceFiles = async (projectId: number, formData: FormData): Promise<boolean> => {
+    try {
+        const response = await axiosInstance.post(`admin/add_sentence?project_id=${projectId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        if (response)
+            return true
+        else
+            return false
+    } catch (error) {
+        return false
     }
 }
