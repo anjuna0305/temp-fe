@@ -2,7 +2,6 @@ import axiosInstance from "./AxiosConfig"
 import { LoginPayload, ResponseSentence, signupPayload, SourceSentence } from "./Interfaces"
 import { saveToken, saveUserInfoLocalstorage, splitToken } from "../Auth/Auth"
 import { getLoggedUserInfo } from "./ApiAuth"
-import axios from "axios"
 
 
 // user login
