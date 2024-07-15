@@ -1,7 +1,7 @@
 import { Outlet, Link } from 'react-router-dom'
-import { getSessionState, useMinAuth } from './Auth'
+import { getSessionState, MinAuth } from './Auth'
 import { useState, useEffect } from 'react'
-// import PageLoadSpinner from '../components/PageLoadSpinner'
+import PageLoadSpinner from '../components/PageLoadSpinner'
 
 const PrivateAuthProvider = () => {
     const [logged, setLogged] = useState<boolean>(false)
@@ -25,7 +25,7 @@ const PrivateAuthProvider = () => {
         // }
         const getAuth = () => {
             setWaiting(true)
-            const auth_result = useMinAuth()
+            const auth_result = MinAuth()
             setLogged(auth_result)
             setWaiting(false)
         }
@@ -35,7 +35,7 @@ const PrivateAuthProvider = () => {
 
     return (
         <>
-            {/* {waiting ? <PageLoadSpinner active /> : */}
+            {waiting ? <PageLoadSpinner active /> :
                 logged ?
                     <Outlet />
                     :
@@ -59,7 +59,7 @@ const PrivateAuthProvider = () => {
                             </div>
                         </div>
                     </>
-            {/* } */}
+            }
         </>
     )
 }

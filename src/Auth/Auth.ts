@@ -137,7 +137,7 @@ export const useAuth = async (): Promise<boolean> => {
     }
 }
 
-export const useAdminAuth = async (): Promise<boolean> => {
+export const AdminAuth = async (): Promise<boolean> => {
     if (getStoredToken()) {
         try {
             const validToken = await isValidAdminToken()
@@ -154,7 +154,7 @@ export const useAdminAuth = async (): Promise<boolean> => {
     }
 }
 
-export const useMinAuth = (): boolean => { // Introducing 5-second delay
+export const MinAuth = (): boolean => { // Introducing 5-second delay
     const token = getStoredToken()
     console.log("from min auth, token is: ", token)
     if (token) {

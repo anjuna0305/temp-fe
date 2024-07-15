@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import MinimumNavbar from './MinimumNavbar';
 import MessageAppBackground from './MessageAppBackground';
 import { getOngoingSentence, getResponses, getSourceSentences, sendResponse } from '../Api/ApiUser';
@@ -30,7 +30,7 @@ const TestComponent = () => {
             }
         };
         fetchData();
-    }, []);
+    });
 
     const fetchInitialMessages = async () => {
         const initialResponseLoad = await fetchResponses();
@@ -44,7 +44,7 @@ const TestComponent = () => {
         const responses = await getResponses(projectId, msgSkip, msgLimit);
         console.log("mgskip, mglim", msgSkip, msgLimit)
         if (responses) {
-            console.log("responses: ",responses)
+            console.log("responses: ", responses)
             setMsgSkip(prevSkip => prevSkip + msgLimit);
         }
         return responses;

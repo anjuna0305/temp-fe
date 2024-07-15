@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { downloadResponses, getProjectInfo, uploadSourceSentenceFiles } from "../Api/ApiAdmin"
 import { ProjectInfo } from "../Api/Interfaces"
 import { saveAs } from 'file-saver'
+import AdminAuthProvider from "../Auth/AdminAuthProvider"
 
 const alerTypes = {
     success: "success",
@@ -80,6 +81,7 @@ const ProjectInfoPage = () => {
 
     return (
         <>
+            <AdminAuthProvider />
             <h3 className="mb-5">{projectInfo.project_name}</h3>
             <section className="mb-4">
                 <h5>Upload Sentences</h5>

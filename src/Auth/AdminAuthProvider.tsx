@@ -1,8 +1,9 @@
 import { Outlet, Link } from 'react-router-dom'
-import { getSessionState, useAdminAuth } from './Auth'
+import { getSessionState, AdminAuth } from './Auth'
 import { useState, useEffect } from 'react'
 // import PageLoadSpinner from '../components/PageLoadSpinner'
 import Cookies from 'js-cookie'
+import PageLoadSpinner from '../components/PageLoadSpinner'
 
 
 const AdminAuthProvider = () => {
@@ -29,19 +30,20 @@ const AdminAuthProvider = () => {
             setWaiting(true)
             const adminCookie = Cookies.get("isAdmin")
             if (adminCookie !== "true") {
-                const response = await useAdminAuth()
+                const response = await AdminAuth()
                 setLogged(response)
             }
             setWaiting(false)
         }
         setLogged(true)
         setWaiting(false)
-        // auth()
+
+        auth()
     }, [])
 
     return (
         <>
-            {/* {waiting ? <PageLoadSpinner active /> : */}
+            {waiting ? <PageLoadSpinner active /> :
                 logged ?
                     <Outlet />
                     :
@@ -65,7 +67,7 @@ const AdminAuthProvider = () => {
                             </div>
                         </div>
                     </>
-            {/* } */}
+            }
         </>
     )
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { getSavedUserInfoFromLocalstorage, removeStoredToken } from "../Auth/Auth"
 import { LoggedUserInfo } from "../Api/Interfaces"
+import PageLoadSpinner from "./PageLoadSpinner"
 // import PageLoadSpinner from "./PageLoadSpinner"
 
 const HamburgerMenu = () => {
@@ -50,7 +51,7 @@ const HamburgerMenu = () => {
 
     return (
         <>
-            {/* <PageLoadSpinner active={pageLoading} /> */}
+            <PageLoadSpinner active={pageLoading} />
             <div className="d-flex align-items-center gap-3 user-select-none" style={{ position: "relative" }}>
                 <div
                     style={{ borderRadius: "50%", backgroundColor: "white", width: "42px", height: "42px", cursor: "pointer" }}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { getProjects } from "../Api/ApiAdmin"
 import { ProjectInfo } from "../Api/Interfaces"
 import { Link } from "react-router-dom"
+import AdminAuthProvider from "../Auth/AdminAuthProvider"
 
 const AdminProjectPage = () => {
 
@@ -21,6 +22,7 @@ const AdminProjectPage = () => {
 
     return (
         <>
+            <AdminAuthProvider />
             <section className="mb-5">
                 <h3>Create a new project</h3>
 
