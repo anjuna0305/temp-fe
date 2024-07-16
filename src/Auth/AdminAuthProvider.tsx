@@ -1,8 +1,7 @@
 import { Outlet, Link } from 'react-router-dom'
-import { getSessionState, AdminAuth } from './Auth'
+import { getSessionState,  AdminMinAuth } from './Auth'
 import { useState, useEffect } from 'react'
 // import PageLoadSpinner from '../components/PageLoadSpinner'
-import Cookies from 'js-cookie'
 import PageLoadSpinner from '../components/PageLoadSpinner'
 
 
@@ -13,26 +12,10 @@ const AdminAuthProvider = () => {
     const isLoggedBefore = getSessionState()
 
     useEffect(() => {
-        // const getAuth = async () => {
-        //     setWaiting(true)
-        //     try {
-        //         const auth_result = await useAuth()
-        //         console.log("get Auth called")
-        //         console.log("authresult: ", auth_result)
-        //         setLogged(auth_result)
-        //     } catch (error) {
-        //         setLogged(false)
-        //     }
-        //     setWaiting(false)
-
-        // }
         const auth = async () => {
             setWaiting(true)
-            const adminCookie = Cookies.get("isAdmin")
-            if (adminCookie !== "true") {
-                const response = await AdminAuth()
-                setLogged(response)
-            }
+            const authResult = AdminMinAuth()
+            setLogged(authResult)
             setWaiting(false)
         }
         setLogged(true)

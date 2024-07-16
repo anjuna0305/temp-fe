@@ -1,5 +1,5 @@
 import axiosInstance from "./AxiosConfig"
-import { UserInfo, ProjectInfo } from "./Interfaces"
+import { UserInfo, ProjectInfo, CreateProjectPayload } from "./Interfaces"
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -154,5 +154,18 @@ export const uploadSourceSentenceFiles = async (projectId: number, formData: For
             return false
     } catch (error) {
         return false
+    }
+}
+
+
+export const createProject = async (values: CreateProjectPayload) => {
+    try {
+        const response = await axiosInstance.post(`admin/project/new`, values)
+        if (response.data)
+            return response.data as ProjectInfo
+        else
+            return undefined
+    } catch (error) {
+        return undefined
     }
 }

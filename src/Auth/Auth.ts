@@ -1,5 +1,5 @@
 import Cookies from "js-cookie"
-import { getLoggedUserInfo, isValidAdminToken, isValidToken } from "../Api/ApiAuth"
+import { getLoggedUserInfo,  isValidToken } from "../Api/ApiAuth"
 import { LoggedUserInfo } from "../Api/Interfaces"
 
 export interface SpliToken {
@@ -36,10 +36,8 @@ export const getStoredToken = (): string | null => {
 
 export const removeStoredToken = (): boolean => {
     try {
-        console.log("calleddddd")
         localStorage.removeItem("token_payload")
         Cookies.remove("token_signature")
-        console.log("after called: ", localStorage.getItem("token_payload"))
         return true
     } catch (error) {
         return false
@@ -73,12 +71,11 @@ export const saveUserInfoLocalstorage = (userData: LoggedUserInfo): boolean => {
         localStorage.setItem("id", `${userData?.id}`)
         localStorage.setItem("username", userData?.username)
         localStorage.setItem("email", userData?.email)
+        localStorage.setItem("role", userData?.role)
         return true
     } catch (error) {
-        console.log("Failed to save userdata to local storage.")
         return false
     }
-
 }
 
 export const getSavedUserInfoFromLocalstorage = (): LoggedUserInfo | null => {
@@ -86,38 +83,15 @@ export const getSavedUserInfoFromLocalstorage = (): LoggedUserInfo | null => {
         return {
             id: Number(localStorage.getItem("id") ?? 0),
             username: localStorage.getItem("username") ?? "",
-            email: localStorage.getItem("email") ?? ""
+            email: localStorage.getItem("email") ?? "",
+            role: localStorage.getItem("role") ?? ""
         }
     } catch (error) {
-        console.log("Failed to retriew data from local storage.")
         return null
     }
 }
 
-// export const useAuth = async (): Promise<boolean> => {
-//     // const user = localStorage.getItem("Token")
-//     if (getStoredToken()) {
-//         try {
-//             const validToken = await isValidToken()
-//             if (!validToken)
-//                 return false
-//             const currentUser = await getLoggedUserInfo()
-//             if (!currentUser)
-//                 return false
-//             saveUserInfoLocalstorage(currentUser)
-//             return true
-//         } catch (error) {
-//             return false
-//         }
-//     }
-//     else {
-//         return false
-//     }
-// }
-
 export const useAuth = async (): Promise<boolean> => {
-    // const user = localStorage.getItem("Token")
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Introducing 5-second delay
     if (getStoredToken()) {
         try {
             const validToken = await isValidToken()
@@ -137,36 +111,20 @@ export const useAuth = async (): Promise<boolean> => {
     }
 }
 
-export const AdminAuth = async (): Promise<boolean> => {
-    if (getStoredToken()) {
-        try {
-            const validToken = await isValidAdminToken()
-            if (!validToken)
-                return false
-            Cookies.set("isAdmin", "true")
-            return true
-        } catch (error) {
-            return false
-        }
+export const AdminMinAuth = (): boolean => {
+    const loggedUserData = getSavedUserInfoFromLocalstorage()
+    const token = getStoredToken()
+    if (loggedUserData && token) {
+        return loggedUserData.role === "admin" ? true : false
     }
-    else {
-        return false
-    }
+    return false
 }
 
 export const MinAuth = (): boolean => { // Introducing 5-second delay
+    const loggedUserData = getSavedUserInfoFromLocalstorage()
     const token = getStoredToken()
-    console.log("from min auth, token is: ", token)
-    if (token) {
-        return true
-    } {
-        return false
+    if (loggedUserData && token) {
+        return loggedUserData.role === "reg_user" ? true : false
     }
+    return false
 }
-
-// const PrivateRouteProvider = () => {
-//     const isLoggedIn = useAuth()
-//     isLoggedIn ? <Outlet /> : <Navigate replace to={"/login"} />
-// }
-
-// export default PrivateRouteProvider

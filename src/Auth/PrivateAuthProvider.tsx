@@ -10,19 +10,6 @@ const PrivateAuthProvider = () => {
     const isLoggedBefore = getSessionState()
 
     useEffect(() => {
-        // const getAuth = async () => {
-        //     setWaiting(true)
-        //     try {
-        //         const auth_result = await useAuth()
-        //         console.log("get Auth called")
-        //         console.log("authresult: ", auth_result)
-        //         setLogged(auth_result)
-        //     } catch (error) {
-        //         setLogged(false)
-        //     }
-        //     setWaiting(false)
-
-        // }
         const getAuth = () => {
             setWaiting(true)
             const auth_result = MinAuth()

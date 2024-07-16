@@ -5,6 +5,8 @@ import { userLogin } from '../Api/ApiUser';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { saveToken, saveUserInfoLocalstorage, splitToken } from '../Auth/Auth';
+import { getLoggedUserInfo } from '../Api/ApiAuth';
 
 const LoginForm = () => {
     const navigate = useNavigate()
@@ -18,9 +20,32 @@ const LoginForm = () => {
         setLoginErrorMessage("")
         try {
             const response: AxiosResponse = await userLogin(values)
+            if (response.data.access_token) {
+                /*
+                    token will split to 3 parts fom '.'
+                    first two parts will re-concatinate with '.' and store in local storage
+                    and the 3rd part(the signature will be stored in Cookie storage.)
+                    when user send request to backend those parts will concatinate with '.' 
+                    the reason for doing this is - security puposes.
+                */
+                const token: string = response.data.access_token
+                const split_token = splitToken(token)
+
+                saveToken(split_token)
+                console.log("token is saved")
+                // Cookies.set("refreshToken", response.data.refreshToken, { expires: 1 });
+
+                const userData = await getLoggedUserInfo()
+                if (userData) {
+                    saveUserInfoLocalstorage(userData)
+                    userData.role === "admin" ? navigate("/admin") : navigate("/")
+                }
+            }
+
+
             if (response.status == 200) {
                 console.log("handle login try called")
-                navigate("/")
+
             }
         } catch (error) {
             if (error instanceof AxiosError && error.response) {

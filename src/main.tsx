@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import './assets/custom_bootstrap/custom_bootstrap.css'
 import './index.css'
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import LoginPage from './pages/LoginPage';
 import AdminRootPage from './pages/AdminRootPage';
 import AdminProjectPage from './pages/AdminProjectPage';
@@ -10,12 +10,17 @@ import NotFoundErrorPage from './pages/errorPages/NotFoundErrorPage';
 import InternalServerErrorPage from './pages/errorPages/InternalServerErrorPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import HomePage from './pages/HomePage';
+import PrivateAuthProvider from './Auth/PrivateAuthProvider';
+import AdminAuthProvider from './Auth/AdminAuthProvider';
+import React from 'react';
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <HomePage />,
-        errorElement: <InternalServerErrorPage />,
+        element: <PrivateAuthProvider />,
+        children: [
+            { index: true, element: <HomePage /> },
+        ]
     },
     {
         path: "/login",
@@ -23,20 +28,26 @@ const router = createBrowserRouter([
         errorElement: <InternalServerErrorPage />,
     },
     {
-        path: "/admin",
-        element: <AdminRootPage />,
-        errorElement: <InternalServerErrorPage />,
+        element: <AdminAuthProvider />,
         children: [
             {
-                path: "projects",
-                element: <AdminProjectPage />
+                path: "/admin",
+                element: <AdminRootPage />,
+                children: [
+                    { index: true, element: <Navigate replace to="projects" /> },
+                    {
+                        path: "projects",
+                        element: <AdminProjectPage />
+                    },
+                    {
+                        path: "projects/:id",
+                        element: <ProjectInfoPage />
+                    }
+                ]
             },
-            {
-                path: "projects/:id",
-                element: <ProjectInfoPage />
-            }
-        ]
+        ],
     },
+
     {
         path: "/change-password",
         element: <ChangePasswordPage />,
@@ -49,5 +60,7 @@ const router = createBrowserRouter([
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <RouterProvider router={router} />,
+    <React.StrictMode>
+        <RouterProvider router={router} />,
+    </React.StrictMode>
 )

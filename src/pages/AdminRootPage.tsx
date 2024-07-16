@@ -1,39 +1,14 @@
 // import { useEffect } from 'react'
 
 import { NavLink, Outlet } from 'react-router-dom'
-import { useEffect, } from 'react'
 import MinimumNavbar from '../components/MinimumNavbar'
-import AdminAuthProvider from '../Auth/AdminAuthProvider'
 // import { getServiceByServiceId } from '../Api/ApiService'
 // import { ApiServiceData } from '../Api/Interfaces'
 
 const AdminRootPage = () => {
 
-    // const [isService, setIsService] = useState<boolean>(true)
-    // const [serviceInfo, setServiceInfo] = useState<ApiServiceData>({} as ApiServiceData)
-
-    useEffect(() => {
-        // const rightSection = document.getElementById("right-section")
-        // rightSection?.addEventListener("scroll", () => {
-
-        // })
-        // const loadApiserviceData = async (id: number) => {
-        //     const service = await getServiceByServiceId(id)
-        //     if (!service) {
-        //         setIsService(false)
-        //     }
-        //     else {
-        //         setIsService(true)
-        //         setServiceInfo(service)
-        //     }
-        // }
-        // loadApiserviceData(apiId)
-
-    }, [])
-
     return (
         <>
-            <AdminAuthProvider />
             <MinimumNavbar />
             <div className='container'>
                 <div className="row">

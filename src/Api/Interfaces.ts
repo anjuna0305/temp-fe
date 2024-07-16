@@ -3,6 +3,10 @@ export interface LoginPayload {
     password: string
 }
 
+export interface CreateProjectPayload {
+    project_name: string
+}
+
 export interface BinaryResponse {
     result: boolean
     message: string
@@ -19,6 +23,7 @@ export interface LoggedUserInfo {
     id: number
     username: string
     email: string
+    role: string
 }
 
 export interface UserInfo {

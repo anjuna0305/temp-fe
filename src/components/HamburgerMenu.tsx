@@ -10,15 +10,10 @@ const HamburgerMenu = () => {
 
     const [pageLoading, setPageLoading] = useState(true)
     const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false)
-    const [savedUserInfo, setSavedUserInfo] = useState<LoggedUserInfo>({
-        id: 0,
-        username: "",
-        email: ""
-    })
+    const [savedUserInfo, setSavedUserInfo] = useState<LoggedUserInfo>({} as LoggedUserInfo)
 
     const logout = async () => {
         setPageLoading(true)
-        // async function to mark logout
         removeStoredToken()
         navigate("/")
         window.location.reload()
@@ -38,7 +33,6 @@ const HamburgerMenu = () => {
                 return
             }
             setIsHamburgerMenuOpen((event.target instanceof Node && hamburgerElement?.contains(event.target)) ? true : false)
-            // setIsHamburgerMenuOpen((event.target instanceof Node && hamburgerElement?.contains(event.target)) ? true : false)
         })
 
         const loggedUserInfo = getSavedUserInfoFromLocalstorage()

@@ -3,7 +3,7 @@ import MinimumNavbar from '../components/MinimumNavbar';
 import MessageAppBackground from '../components/MessageAppBackground';
 import { getOngoingSentence, getResponses, getSourceSentences, sendResponse } from '../Api/ApiUser';
 import { ResponseSentence, SourceSentence } from '../Api/Interfaces';
-import PrivateAuthProvider from '../Auth/PrivateAuthProvider';
+// import PrivateAuthProvider from '../Auth/PrivateAuthProvider';
 
 interface MessageInterface {
     type: 'source' | 'response' | 'error';
@@ -110,7 +110,7 @@ const HomePage = () => {
 
     return (
         <>
-            <PrivateAuthProvider />
+            {/* <PrivateAuthProvider /> */}
             <MinimumNavbar />
             <div className="container">
                 <div className="d-flex justify-content-center vh-100">

@@ -1,7 +1,7 @@
 import axiosInstance from "./AxiosConfig"
 import { LoginPayload, ResponseSentence, signupPayload, SourceSentence } from "./Interfaces"
-import { saveToken, saveUserInfoLocalstorage, splitToken } from "../Auth/Auth"
-import { getLoggedUserInfo } from "./ApiAuth"
+// import { saveToken, saveUserInfoLocalstorage, splitToken } from "../Auth/Auth"
+// import { getLoggedUserInfo } from "./ApiAuth"
 
 
 // user login
@@ -17,25 +17,6 @@ export const userLogin = async ({ email, password }: LoginPayload) => {
             "Content-Type": "multipart/form-data"
         }
     })
-    if (response.data.access_token) {
-        /*
-            token will split to 3 parts fom '.'
-            first two parts will re-concatinate with '.' and store in local storage
-            and the 3rd part(the signature will be stored in Cookie storage.)
-            when user send request to backend those parts will concatinate with '.' 
-            the reason for doing this is - security puposes.
-        */
-        const token: string = response.data.access_token
-        const split_token = splitToken(token)
-
-        saveToken(split_token)
-        // Cookies.set("refreshToken", response.data.refreshToken, { expires: 1 });
-
-        const userData = await getLoggedUserInfo()
-        if (userData) {
-            saveUserInfoLocalstorage(userData)
-        }
-    }
     return response
 }
 
