@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom"
+import UserSignupForm from "../forms/UserSignupForm"
 
 const SignUpPage = () => {
     return (
@@ -8,7 +9,7 @@ const SignUpPage = () => {
                     <h1>Sign up to subasa</h1>
                 </div>
                 <div className="col d-flex justify-content-center align-items-center bg-secondary">
-                    <Outlet />
+                    <UserSignupForm />
                 </div>
             </div>
         </>

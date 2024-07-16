@@ -16,7 +16,6 @@ const UserSignupForm = () => {
 
         try {
             const response: AxiosResponse = await userSignup(payload)
-            console.log("this is it ", response.status)
             if (response.status === 201) {
                 setAlertState({ type: "success", message: "User created succesfully. Now you can log in to the system." } as Alert)
                 // user created
@@ -55,8 +54,7 @@ const UserSignupForm = () => {
                     const payload: signupPayload = {
                         username: values.username,
                         email: values.email,
-                        password: values.password,
-                        scopes: "regular_user"
+                        password: values.password
                     }
                     handleSignUp(payload)
                 }}

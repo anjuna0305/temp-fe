@@ -22,7 +22,6 @@ export const userLogin = async ({ email, password }: LoginPayload) => {
 
 
 export const userSignup = async (payload: signupPayload) => {
-
     return await axiosInstance.post("auth/create-user", payload)
 }
 

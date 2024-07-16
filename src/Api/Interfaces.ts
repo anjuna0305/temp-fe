@@ -16,7 +16,6 @@ export interface signupPayload {
     username: string
     email: string
     password: string
-    scopes: string
 }
 
 export interface LoggedUserInfo {

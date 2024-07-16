@@ -14,6 +14,8 @@ import PrivateAuthProvider from './Auth/PrivateAuthProvider';
 import AdminAuthProvider from './Auth/AdminAuthProvider';
 import React from 'react';
 import ChatHolder from './components/ChatHolder';
+import SignUpPage from './pages/SignUpPage';
+import LoginForm from './forms/LoginForm';
 
 const router = createBrowserRouter([
     {
@@ -26,6 +28,11 @@ const router = createBrowserRouter([
     {
         path: "/login",
         element: <LoginPage />,
+        errorElement: <InternalServerErrorPage />,
+    },
+    {
+        path: "/register",
+        element: <SignUpPage />,
         errorElement: <InternalServerErrorPage />,
     },
     {
@@ -56,7 +63,13 @@ const router = createBrowserRouter([
     },
     {
         path: "/test",
-        element: <ChatHolder />
+        element: <ChatHolder />,
+        children: [
+            {
+                path: ":id",
+                element: <LoginForm />
+            }
+        ]
     },
     {
         path: "*",
