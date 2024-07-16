@@ -13,6 +13,7 @@ import HomePage from './pages/HomePage';
 import PrivateAuthProvider from './Auth/PrivateAuthProvider';
 import AdminAuthProvider from './Auth/AdminAuthProvider';
 import React from 'react';
+import ChatHolder from './components/ChatHolder';
 
 const router = createBrowserRouter([
     {
@@ -54,13 +55,15 @@ const router = createBrowserRouter([
         errorElement: <InternalServerErrorPage />,
     },
     {
+        path: "/test",
+        element: <ChatHolder />
+    },
+    {
         path: "*",
         element: <NotFoundErrorPage />
     }
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <RouterProvider router={router} />,
-    </React.StrictMode>
+    <RouterProvider router={router} />,
 )

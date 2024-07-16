@@ -17,7 +17,7 @@ const HomePage = () => {
     const [messages, setMessages] = useState<MessageInterface[]>([]);
     const [isMessageAllowed, setMessageAllowed] = useState<boolean>(false);
     const [msgSkip, setMsgSkip] = useState<number>(0);
-    const msgLimit = 3;
+    const msgLimit = 20;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -62,6 +62,13 @@ const HomePage = () => {
             const sourceMessageInterface = sourceSentenceToMessageInterface(ongoingSentence);
             setSourceId(ongoingSentence.sentence_id)
             setMessages(prevMessages => [sourceMessageInterface, ...prevMessages]);
+        }
+    };
+
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            send();
+            setMessageInputValue('')
         }
     };
 
@@ -128,7 +135,7 @@ const HomePage = () => {
                                         </div>
                                     </div>
                                 ))}
-                                <button onClick={loadMore}>Load More</button>
+                                {/* <button onClick={loadMore}>Load More</button> */}
                             </div>
                             <div id="message_form">
                                 <input
@@ -137,10 +144,9 @@ const HomePage = () => {
                                     id="message_text_input"
                                     value={messageInputValue}
                                     onChange={(e) => setMessageInputValue(e.target.value)}
+                                    onKeyUpCapture={handleKeyPress}
                                 />
-                                <button disabled={!isMessageAllowed} onClick={send} id="send_button">
-                                    Send
-                                </button>
+                                <button disabled={!isMessageAllowed} onClick={send} id="send_button">Send</button>
                             </div>
                         </MessageAppBackground>
                     </div>
