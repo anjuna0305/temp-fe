@@ -45,7 +45,10 @@ const AdminProjectPage = () => {
         project_name: Yup.string().required('Required')
     })
 
-
+    const SToStdTime = (timeString: string): string => {
+        const date = new Date(timeString);
+        return date.toLocaleString();
+    }
 
     useEffect(() => {
         fetchAllProjects()
@@ -103,7 +106,7 @@ const AdminProjectPage = () => {
                                 {projects.map((project, index) => (
                                     <tr key={index}>
                                         <td>{project.project_name}</td>
-                                        <td>{project.created_at}</td>
+                                        <td>{SToStdTime(project.created_at)}</td>
                                         <td><Link to={`${project.project_id}`} role="button" className="btn btn-success btn-sm">project info</Link></td>
                                     </tr>
                                 ))}

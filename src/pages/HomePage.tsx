@@ -3,6 +3,7 @@ import MinimumNavbar from '../components/MinimumNavbar';
 import MessageAppBackground from '../components/MessageAppBackground';
 import { getOngoingSentence, getResponses, getSourceSentences, sendResponse } from '../Api/ApiUser';
 import { ResponseSentence, SourceSentence } from '../Api/Interfaces';
+import { useParams } from 'react-router-dom';
 // import PrivateAuthProvider from '../Auth/PrivateAuthProvider';
 
 interface MessageInterface {
@@ -12,17 +13,19 @@ interface MessageInterface {
 }
 
 const HomePage = () => {
-    const [projectId, setProjectId] = useState<number>(1);
+    // const [projectId, setProjectId] = useState<number>(1);
     const [sourceId, setSourceId] = useState<number>(0);
     const [messages, setMessages] = useState<MessageInterface[]>([]);
     const [isMessageAllowed, setMessageAllowed] = useState<boolean>(false);
     const [msgSkip, setMsgSkip] = useState<number>(0);
     const msgLimit = 20;
 
+    const params = useParams()
+    const projectId = Number(params.id)
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setProjectId(1);
                 await fetchInitialMessages();
                 await fetchOngoingSentence();
                 setMessageAllowed(true);
@@ -82,13 +85,13 @@ const HomePage = () => {
         }
     };
 
-    const loadMore = async () => {
-        const newResponseSet = await fetchResponses();
-        if (newResponseSet) {
-            const newMessageInterfaceSet = await generateRequestResponseList(newResponseSet);
-            setMessages(prevMessages => [...prevMessages, ...newMessageInterfaceSet]);
-        }
-    };
+    // const loadMore = async () => {
+    //     const newResponseSet = await fetchResponses();
+    //     if (newResponseSet) {
+    //         const newMessageInterfaceSet = await generateRequestResponseList(newResponseSet);
+    //         setMessages(prevMessages => [...prevMessages, ...newMessageInterfaceSet]);
+    //     }
+    // };
 
     const generateRequestResponseList = async (responseList: ResponseSentence[]): Promise<MessageInterface[]> => {
         const messageInterfaceList: MessageInterface[] = [];
@@ -117,40 +120,26 @@ const HomePage = () => {
 
     return (
         <>
-            {/* <PrivateAuthProvider /> */}
-            <MinimumNavbar />
-            <div className="container">
-                <div className="d-flex justify-content-center vh-100">
-                    <div className="row w-100">
-                        <MessageAppBackground className="col-4 mt-5 left-container">
-                            {/* Left container content */}
-                        </MessageAppBackground>
-
-                        <MessageAppBackground className="col-8 mt-5 right-container">
-                            <div className="message-section" id="msg_application">
-                                {messages.map((message, index) => (
-                                    <div className={``} key={index}>
-                                        <div className={`message-card ${message.type === 'response' ? 'reply' : 'message'}`}>
-                                            {message.content}
-                                        </div>
-                                    </div>
-                                ))}
-                                {/* <button onClick={loadMore}>Load More</button> */}
-                            </div>
-                            <div id="message_form">
-                                <input
-                                    type="text"
-                                    name="message"
-                                    id="message_text_input"
-                                    value={messageInputValue}
-                                    onChange={(e) => setMessageInputValue(e.target.value)}
-                                    onKeyUpCapture={handleKeyPress}
-                                />
-                                <button disabled={!isMessageAllowed} onClick={send} id="send_button">Send</button>
-                            </div>
-                        </MessageAppBackground>
+            <div className="message-section" id="msg_application">
+                {messages.map((message, index) => (
+                    <div className={``} key={index}>
+                        <div className={`message-card ${message.type === 'response' ? 'reply' : 'message'}`}>
+                            {message.content}
+                        </div>
                     </div>
-                </div>
+                ))}
+                {/* <button onClick={loadMore}>Load More</button> */}
+            </div>
+            <div id="message_form">
+                <input
+                    type="text"
+                    name="message"
+                    id="message_text_input"
+                    value={messageInputValue}
+                    onChange={(e) => setMessageInputValue(e.target.value)}
+                    onKeyUpCapture={handleKeyPress}
+                />
+                <button disabled={!isMessageAllowed} onClick={send} id="send_button">Send</button>
             </div>
         </>
     );

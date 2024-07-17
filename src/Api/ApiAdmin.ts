@@ -169,3 +169,62 @@ export const createProject = async (values: CreateProjectPayload) => {
         return undefined
     }
 }
+
+export const getSourceSentenceCount = async (projectId: number): Promise<number | undefined> => {
+    try {
+        const response = await axiosInstance.get(`admin/project/${projectId}/source_sentence_count`)
+        if (response.data) {
+            return response.data
+        }
+        else {
+            return undefined
+        }
+    } catch (error) {
+        return undefined
+    }
+}
+
+export const getResponseCount = async (projectId: number): Promise<number | undefined> => {
+    try {
+        const response = await axiosInstance.get(`admin/project/${projectId}/response_count`)
+        if (response.data) {
+            return response.data
+        }
+        else {
+            return undefined
+        }
+    } catch (error) {
+        return undefined
+    }
+}
+
+
+export const publishProject = async (projectId: number) => {
+    // /project/{project_id}/unpublish
+    try {
+        const result = await axiosInstance.patch(`admin/project/${projectId}/publish`)
+        if (result.status === 200) {
+            console.log("status is 200")
+            return true
+        }
+        return false
+    } catch (error) {
+        console.log("there was errro!")
+        return false
+    }
+}
+
+export const unPublishProject = async (projectId: number) => {
+    // /project/{project_id}/unpublish
+    try {
+        const result = await axiosInstance.patch(`admin/project/${projectId}/unpublish`)
+        if (result.status === 200) {
+            console.log("status is 200")
+            return true
+        }
+        return false
+    } catch (error) {
+        console.log("there was errro!")
+        return false
+    }
+}

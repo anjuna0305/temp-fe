@@ -67,7 +67,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: ":id",
-                element: <LoginForm />
+                element: <HomePage />
             }
         ]
     },

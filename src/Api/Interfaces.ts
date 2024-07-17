@@ -55,5 +55,6 @@ export interface ResponseSentence {
 export interface ProjectInfo {
     "project_name": string,
     "created_at": string,
-    "project_id": number
+    "project_id": number,
+    "is_published": boolean
 }
