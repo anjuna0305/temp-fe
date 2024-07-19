@@ -13,7 +13,7 @@ const AdminRootPage = () => {
             <div className='container'>
                 <div className="row">
                     <div className='col-3 d-flex flex-column border p-3 py-3 apiInfoPage-height' id='left-section'>
-                        <h5 className='pt-5'>Bonsoir, Admin</h5>
+                        <h5 className='pt-2'>Bonsoir, Admin</h5>
 
                         <ul className='p-4 px-1 pt-3 d-grid gap-2 overflowY-auto'>
                             <div className="list-group">

@@ -85,7 +85,8 @@ const HomePage = () => {
             console.log("mgskip, mglim", msgSkip, msgLimit)
             if (responses) {
                 setMsgSkip(prevSkip => prevSkip + msgLimit);
-                setLastResponseId(responses[0].source_sentence_id)
+                if (responses[0])
+                    setLastResponseId(responses[0].source_sentence_id)
             }
             return responses;
         }
@@ -164,20 +165,32 @@ const HomePage = () => {
         <>
             <MinimumNavbar />
             <div className="container">
-                <div className="d-flex justify-content-center vh-100">
+                <div className="apiInfoPage-height">
+                    <div className='row w-100 mt-4'>
+                        <div className='project-header col-4 border-right-0'>
+                            <h4 className='m-0'>Projects</h4>
+                        </div>
+                        <div className='project-header col-8'>
+                            <h4 className='m-0'>Projects</h4>
+                        </div>
+                    </div>
                     <div className="row w-100">
-                        <MessageAppBackground className="col-4 mt-5 left-container">
-                            {projects ?
-                                projects.map((project, index) => (
-                                    // <ProjectChat key={index} to={`${project.project_id}`} >{project.project_name}</ProjectChat>
-                                    <div className={"project-chat"} key={index} onClick={() => { handleProjectChange(project.project_id) }}>{project.project_name}</div>
-                                ))
-                                :
-                                <><div className="alert alert-danger" role="alert">No published projects</div></>
-                            }
+                        <MessageAppBackground className="col-4 px-2 left-container">
+
+                            <div className='overflowY-auto'>
+                                {projects ?
+                                    projects.map((project, index) => (
+                                        // <ProjectChat key={index} to={`${project.project_id}`} >{project.project_name}</ProjectChat>
+                                        <div className={`project-chat ${projectId == project.project_id ? "active" : ""}`} key={index} onClick={() => { handleProjectChange(project.project_id) }}>{project.project_name}</div>
+                                    ))
+                                    :
+                                    <><div className="alert alert-danger" role="alert">No published projects</div></>
+                                }
+                            </div>
                         </MessageAppBackground>
 
-                        <MessageAppBackground className="col-8 mt-5 right-container">
+                        <MessageAppBackground className="col-8 right-container">
+
                             <div className="message-section" id="msg_application">
                                 {lastId === lastResponseId ? <div className="alert alert-info m-2" role="alert">You have responded all sentences.</div> : <></>}
                                 {messages.map((message, index) => (
