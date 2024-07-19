@@ -76,3 +76,12 @@ export const sendResponse = async (sourceSentenceId: number, projectId: number, 
     }
     return await axiosInstance.post("user/response/new", responseData) ? true : false
 }
+
+
+export const getLastId = async (projectId: number) => {
+    const response = await axiosInstance(`user/project/${projectId}/final`)
+    if (response.status === 200)
+        return response.data
+    else
+        return 200
+}
