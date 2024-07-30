@@ -104,6 +104,7 @@ const HomePage = () => {
                 const sourceMessageInterface = sourceSentenceToMessageInterface(ongoingSentence);
                 setSourceId(ongoingSentence.sentence_id)
                 setMessages(prevMessages => [sourceMessageInterface, ...prevMessages])
+                setMessageInputValue('')
             }
         }
     };
