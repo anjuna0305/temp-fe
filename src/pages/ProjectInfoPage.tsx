@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { downloadResponses, getProjectInfo, getResponseCount, getSourceSentenceCount, publishProject, unPublishProject, uploadSourceSentenceFiles } from "../Api/ApiAdmin"
-import { ProjectInfo } from "../Api/Interfaces"
+import { downloadResponses, downloadResponsesByUser, getProjectInfo, getRespondedUsers, getResponseCount, getSourceSentenceCount, publishProject, unPublishProject, uploadSourceSentenceFiles } from "../Api/ApiAdmin"
+import { ProjectInfo, UserInfo } from "../Api/Interfaces"
 import { saveAs } from 'file-saver'
 import AdminAuthProvider from "../Auth/AdminAuthProvider"
 import { useParams } from "react-router-dom"
@@ -33,6 +33,8 @@ const ProjectInfoPage = () => {
     const [publishAlert, setPublishAlert] = useState<Alert | undefined>(undefined)
     const [isPublishWaiting, setIsPublishWaiting] = useState(false)
 
+    const [respondedUsers, setRespondedUsers] = useState<UserInfo[] | undefined>()
+
     const params = useParams()
     const projectId = Number(params.id)
 
@@ -48,6 +50,21 @@ const ProjectInfoPage = () => {
             setProjectInfo(projectInfo)
         } else {
             setProjectInfo(undefined)
+        }
+    }
+
+    const fetchRespondedUsers = async () => {
+        const users = await getRespondedUsers(projectId)
+        users ? setRespondedUsers(users) : setRespondedUsers(undefined)
+    }
+
+
+    const getResponsesByUser = async (userId: number, userName: string) => {
+        const response = await downloadResponsesByUser(projectId, userId)
+        if (response) {
+            const contentType = response.headers['content-type'] || 'application/octet-stream'
+            const blob = new Blob([response.data], { type: contentType })
+            saveAs(blob, `project_${projectId}_${userName}_responses.zip`)
         }
     }
 
@@ -141,6 +158,7 @@ const ProjectInfoPage = () => {
         if (projectId) {
             fetchProjectInfo()
             fetchMoreProjectInfo()
+            fetchRespondedUsers()
         }
     }, [])
 
@@ -221,7 +239,30 @@ const ProjectInfoPage = () => {
 
                     <section className="mb-5">
                         <h5>Download Responses</h5>
-                        <button className="btn btn-primary btn-sm" onClick={getResponses}>Download responses</button>
+                        <button className="btn btn-warning btn-sm" onClick={getResponses}>Download All responses</button>
+                        <h6 className="mt-4">Responded users</h6>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {respondedUsers ?
+                                    respondedUsers.map((user, index) => (
+                                        <tr key={index}>
+                                            <td>{user.username}</td>
+                                            <td><button className="btn btn-sm btn-warning" onClick={() => getResponsesByUser(user.id, user.username)}>Download responses</button></td>
+                                        </tr>)
+                                    )
+
+                                    :
+                                    <div className={`alert alert-danger`} role="alert">No responses yet.</div>
+                                }
+
+                            </tbody>
+                        </table>
                     </section>
                 </>
                 :

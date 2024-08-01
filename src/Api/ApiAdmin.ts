@@ -118,7 +118,11 @@ export const stopService = async (apiId: number) => {
 
 
 export const downloadResponses = async (projectId: number) => {
-    return await axiosInstance.get(`admin/responses?project_id=${projectId}`, { responseType: 'blob' })
+    return await axiosInstance.get(`admin/responses/${projectId}`, { responseType: 'blob' })
+}
+
+export const downloadResponsesByUser = async (projectId: number, userId: number) => {
+    return await axiosInstance.get(`admin/responses/${projectId}?user_id=${userId}`, { responseType: 'blob' })
 }
 
 
@@ -219,12 +223,24 @@ export const unPublishProject = async (projectId: number) => {
     try {
         const result = await axiosInstance.patch(`admin/project/${projectId}/unpublish`)
         if (result.status === 200) {
-            console.log("status is 200")
             return true
         }
         return false
     } catch (error) {
-        console.log("there was errro!")
         return false
+    }
+}
+
+
+export const getRespondedUsers = async (projectId: number): Promise<UserInfo[] | null> => {
+    try {
+        const result = await axiosInstance.get(`/admin/responsed-users/${projectId}`)
+        if (result.status === 200) {
+            console.log("status is 200")
+            return result.data as UserInfo[]
+        } else
+            return null
+    } catch (error) {
+        return null
     }
 }
